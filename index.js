@@ -171,6 +171,7 @@ class Loc {
     return 0;
   }
 }
+
 const setDefualtData = (obj) => {
   let thisFont = allFontStyle[obj?.font_style];
   let thisColor = allColors[obj?.color];
@@ -178,6 +179,14 @@ const setDefualtData = (obj) => {
   obj.defs = new Array();
   if (obj.right === undefined) {
     obj.right = 0;
+  }
+  if (obj.animation == undefined) {
+    obj.animation = {
+      right: 0,
+      timer: 0,
+    };
+  } else {
+    obj.defs.push("animation");
   }
   if (obj.top === undefined) {
     obj.top = 0;
@@ -231,39 +240,106 @@ const getColor = (name) => {
 const mainColor = (obj) => {
   obj = setDefualtData(obj);
   process.stdout.moveCursor(obj.right);
-  if (obj.defs.includes("color") && obj.defs.includes("bgColor")) {
-    process.stdout.write(
-      "\x1b[" + getFont(obj?.font_style) + "m" + obj?.text + "\n"
-    );
-  } else if (obj.defs.includes("bgColor")) {
-    process.stdout.write(
-      "\033[38;2;" +
-        getColor(obj?.color) +
-        getFont(obj?.font_style) +
-        "m" +
-        obj?.text +
-        "\n"
-    );
-  } else if (obj.defs.includes("color")) {
-    process.stdout.write(
-      "\033[48;2;" +
-        getColor(obj?.bgColor) +
-        getFont(obj?.font_style) +
-        "m" +
-        obj?.text +
-        "\n"
-    );
+  process.stdout.cursorTo(0);
+  if (obj.defs.includes("animation")) {
+    return new Promise((resv) => {
+      (function () {
+        let i = 0;
+        this.timer = setInterval(() => {
+          if (i === obj.animation.right) {
+            process.stdout.write(getColor("reset"));
+            process.stdout.write("\n");
+            i = 0;
+            resv();
+            clearInterval(this.timer);
+          } else {
+            function getSpace(n) {
+              let tmp = "";
+              for (let i = 0; i < n; i++) {
+                tmp += " ";
+              }
+              return tmp;
+            }
+            process.stdout.clearLine(0);
+            process.stdout.cursorTo(0);
+            if (obj.defs.includes("color") && obj.defs.includes("bgColor")) {
+              process.stdout.write(
+                getSpace(i) +
+                  "\x1b[" +
+                  getFont(obj?.font_style) +
+                  "m" +
+                  obj?.text
+              );
+            } else if (obj.defs.includes("bgColor")) {
+              process.stdout.write(
+                getSpace(i) +
+                  "\033[38;2;" +
+                  getColor(obj?.color) +
+                  getFont(obj?.font_style) +
+                  "m" +
+                  obj?.text
+              );
+            } else if (obj.defs.includes("color")) {
+              process.stdout.write(
+                getSpace(i) +
+                  "\033[48;2;" +
+                  getColor(obj?.bgColor) +
+                  getFont(obj?.font_style) +
+                  "m" +
+                  obj?.text
+              );
+            } else {
+              process.stdout.write(
+                getSpace(i) +
+                  "\033[38;2;" +
+                  getColor(obj?.color) +
+                  getFont(obj?.font_style) +
+                  ";48;2;" +
+                  getColor(obj?.bgColor) +
+                  "m" +
+                  obj?.text
+              );
+            }
+            i++;
+          }
+        }, obj.animation.timer);
+      })();
+    });
   } else {
-    process.stdout.write(
-      "\033[38;2;" +
-        getColor(obj?.color) +
-        getFont(obj?.font_style) +
-        ";48;2;" +
-        getColor(obj?.bgColor) +
-        "m" +
-        obj?.text +
-        "\n"
-    );
+    if (obj.defs.includes("color") && obj.defs.includes("bgColor")) {
+      process.stdout.write(
+        "\x1b[" + getFont(obj?.font_style) + "m" + obj?.text + "\n"
+      );
+    } else if (obj.defs.includes("bgColor")) {
+      process.stdout.write(
+        "\033[38;2;" +
+          getColor(obj?.color) +
+          getFont(obj?.font_style) +
+          "m" +
+          obj?.text +
+          "\n"
+      );
+    } else if (obj.defs.includes("color")) {
+      process.stdout.write(
+        "\033[48;2;" +
+          getColor(obj?.bgColor) +
+          getFont(obj?.font_style) +
+          "m" +
+          obj?.text +
+          "\n"
+      );
+    } else {
+      process.stdout.write(
+        "\033[38;2;" +
+          getColor(obj?.color) +
+          getFont(obj?.font_style) +
+          ";48;2;" +
+          getColor(obj?.bgColor) +
+          "m" +
+          obj?.text +
+          "\n"
+      );
+    }
   }
   process.stdout.write(getColor("reset"));
   process.stdout.clearLine();
@@ -272,6 +348,43 @@ const mainColor = (obj) => {
     process.stdout.write(getLocation(obj).top);
   }
   process.stdout.cursorTo(0);
+};
+
+function makeObj() {
+  return this;
+}
+
+const cmd = makeObj();
+
+cmd.reset = () => {
+  process.stdout.write("\033c");
+  process.stdout.write(allColors["reset"]);
+};
+cmd.resetColor = () => {
+  process.stdout.write(allColors["reset"]);
+};
+cmd.setBackground = (color, mode) => {
+  if (mode === "b") {
+    process.stdout.write("\033c");
+  }
+  if (color === undefined) {
+    if (obj?.bgColor?.slice(0, 4) !== "rgb:") {
+      obj.color = "colorDef";
+    }
+  }
+  process.stdout.write("\033[48;2;" + getColor(color) + "m");
+};
+
+cmd.resetData = () => {
+  process.stdout.write("\033c");
+};
+
+cmd.log = (...data) => {
+  process.stdout.write(data.join("").toString() + "\n");
+};
+
+cmd.error = (...data) => {
+  process.stderr.write(data.join("").toString() + "\n");
 };
 
 module.exports = {
