@@ -388,6 +388,7 @@ cmd.error = (...data) => {
 };
 
 module.exports = {
+  cmd,
   style: mainColor,
   Loc,
 };
