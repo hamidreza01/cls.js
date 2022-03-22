@@ -36,6 +36,6 @@ jobs:
       env:
           REPO: self
           BRANCH: docs-deployed
-          FOLDER: docs\.vitepress\dist
+          FOLDER: docs/.vitepress/dist
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           MESSAGE: "Build: ({sha}) {msg}"
