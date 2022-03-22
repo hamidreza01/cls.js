@@ -13,7 +13,7 @@ export default defineConfig({
     editLinks: true,
     editLinkText: 'Edit this page on GitHub',
     lastUpdated: 'Last Updated',
-
+    base: '/cls.js/',
     nav: [
       { text: 'Guide', link: '/guide/getting-started', activeMatch: '^/guide/' },
       { text: 'Examples', link: '/examples/examples', activeMatch: '^/examples/' }
