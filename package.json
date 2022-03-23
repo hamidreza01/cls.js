@@ -1,15 +1,26 @@
 {
-  "name": "cls.js",
-  "version": "1.0.2",
-  "description": "command line style module",
-  "main": "index.js",
+  "name": "cls.js-doc",
+  "version": "1.0.0",
+  "description": "cls-js documentation",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "docs:dev": "vitepress dev docs",
+    "docs:build": "vitepress build docs",
+    "docs:serve": "vitepress serve docs"
   },
-  "keywords": [
-    "style",
-    "command line"
-  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hamidreza01/cls.js.git"
+  },
   "author": "",
-  "license": "MS-PL"
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/hamidreza01/cls.js/issues"
+  },
+  "homepage": "https://github.com/hamidreza01/cls.js",
+  "devDependencies": {
+    "vitepress": "^0.22.3"
+  },
+  "dependencies": {
+    "@algolia/client-search": "4.9.1"
+  }
 }
