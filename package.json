@@ -1,15 +1,21 @@
 {
   "name": "cls.js",
-  "version": "1.0.2",
-  "description": "command line style module",
+  "version": "1.5.0",
+  "description": "command line style fream work",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  
   "keywords": [
     "style",
-    "command line"
+    "command line",
+    "cls.js",
+    "cls",
+    "cli",
+    "command line style"
   ],
+  "repository": {"directory": "https://github.com/hamidreza01/cls.js"},
   "author": "",
   "license": "MS-PL"
 }
